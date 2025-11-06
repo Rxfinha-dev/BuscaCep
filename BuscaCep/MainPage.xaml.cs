@@ -1,36 +1,40 @@
 ﻿using System.Net.Http.Json;
 using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
+using BuscaCep.ViewModels;
 
 namespace BuscaCep
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+       
+        BuscaCepViewModel viewModel => (BuscaCepViewModel)BindingContext;
 
         public MainPage()
         {
             InitializeComponent();
+
+            BindingContext = new BuscaCepViewModel();
         }
 
         private async void OnCounterClicked(object sender, EventArgs e)
         {
             try
             {
-                if (string.IsNullOrEmpty(txtCep.Text))
+                if (string.IsNullOrEmpty(viewModel.CEP))
                 {
                     throw new InvalidOperationException(message: "VOCÊ PRECISA INFORMAR O CEP");
                 }
                 else
                 {
-                    lblLogradouro.Text = "CARREGANDO...";
-                    lblLocalidade.Text = "CARREGANDO...";
-                    lblBairro.Text = "CARREGANDO...";
-                    lblLUF.Text = "CARREGANDO...";
+                    lblLogradouro.Text =
+                    lblLocalidade.Text =
+                    lblBairro.Text =
+                    lblLUF.Text =
                     lblDDD.Text = "CARREGANDO...";
 
                     var ViaCepResult = await new HttpClient()
-                           .GetFromJsonAsync<ViaCepDto>(requestUri: $"https://viacep.com.br/ws/{txtCep.Text}/json/") ?? 
+                           .GetFromJsonAsync<ViaCepDto>(requestUri: $"https://viacep.com.br/ws/{viewModel.CEP}/json/") ?? 
                            throw new InvalidOperationException(message: "ALGO DEU ERRADO");
 
                     if(ViaCepResult.erro)
