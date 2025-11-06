@@ -15,43 +15,44 @@ namespace BuscaCep
 
         private async void OnCounterClicked(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtCep.Text))
+            try
             {
-                await this.DisplayAlert("OPS", "VOCÊ PRECISA INFORMAR O CEP", "OK");
-            }
-            else
-            {
-                lblLogradouro.Text = "CARREGANDO...";
-                lblLocalidade.Text = "CARREGANDO...";
-                lblBairro.Text = "CARREGANDO...";
-                lblLUF.Text = "CARREGANDO...";
-                lblDDD.Text = "CARREGANDO...";
-
-                var ViaCepResult = await new HttpClient()
-                       .GetFromJsonAsync<ViaCepDto>(requestUri: $"https://viacep.com.br/ws/{txtCep.Text}/json/");
-
-                if (ViaCepResult is null)
+                if (string.IsNullOrEmpty(txtCep.Text))
                 {
-                    await DisplayAlert("OPS", "ALGO DEU ERRADO", "OK");
+                    throw new InvalidOperationException(message: "VOCÊ PRECISA INFORMAR O CEP");
                 }
                 else
                 {
+                    lblLogradouro.Text = "CARREGANDO...";
+                    lblLocalidade.Text = "CARREGANDO...";
+                    lblBairro.Text = "CARREGANDO...";
+                    lblLUF.Text = "CARREGANDO...";
+                    lblDDD.Text = "CARREGANDO...";
+
+                    var ViaCepResult = await new HttpClient()
+                           .GetFromJsonAsync<ViaCepDto>(requestUri: $"https://viacep.com.br/ws/{txtCep.Text}/json/") ?? 
+                           throw new InvalidOperationException(message: "ALGO DEU ERRADO");
+
+                    if(ViaCepResult.erro)
+                        throw new InvalidOperationException(message: "ALGO DEU ERRADO");
+
                     lblLogradouro.Text = ViaCepResult.logradouro;
                     lblLocalidade.Text = ViaCepResult.localidade;
-                     lblBairro.Text = ViaCepResult?.bairro;
+                    lblBairro.Text = ViaCepResult?.bairro;
                     lblLUF.Text = ViaCepResult.uf; ;
                     lblDDD.Text = ViaCepResult.ddd;
-
-
-
-
                 }
             }
+            catch(Exception ex)
+             {
+                    await this.DisplayAlert("OPS", ex.Message, "OK");
+             }
         }
     }
 
    public class ViaCepDto
     {
+        public bool erro { get; set; }
         public string cep { get; set; }
         public string logradouro { get; set; }
         public string complemento { get; set; }
