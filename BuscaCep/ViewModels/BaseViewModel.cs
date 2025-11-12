@@ -8,17 +8,21 @@ namespace BuscaCep.ViewModels
     {
         
         public event PropertyChangedEventHandler? PropertyChanged;
-        //protected void onPropertyChanged([CallerMemberName] string propertyName = "")
-        //{
-        //    if(PropertyChanged is null)
-        //    {
-        //        return;
-        //    }
 
-        //    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
         protected void onPropertyChanged([CallerMemberName] string propertyName = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private bool _isBusy = false;
+        public bool IsBusy {  get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                onPropertyChanged();
+                onPropertyChanged(nameof(IsNotBusy));
+            }
+        }
+
+        public bool IsNotBusy => !IsBusy;
 
 
 

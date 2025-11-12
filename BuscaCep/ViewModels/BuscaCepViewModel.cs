@@ -21,59 +21,20 @@ namespace BuscaCep.ViewModels
             {
                 _CEP = value;
                 onPropertyChanged();
+                BuscarCommand.ChangeCanExecute();
             }
         }
-        private string? _Logradouro;
-        public string? Logradouro 
-        { 
-            get => _Logradouro;
-            set
-            {
-                _Logradouro = value;
-                onPropertyChanged();
-            }
-        }
-        private string? _Bairro;
-        public string? Bairro 
-        { 
-            get => _Bairro;
-            set
-            {
-                _Bairro = value;
-                onPropertyChanged();
-            }
-        }
-        private string? _Localidade;
-        public string? Localidade 
-        { 
-            get => _Localidade;
-            set
-            {
-                _Localidade = value;
-                onPropertyChanged();
-            }
-        }
-        private string? _UF;
-        public string? UF 
-        { 
-            get => _UF;
-            set
-            {
-                _UF = value;
-                onPropertyChanged();
-            }
-        }
-        private string? _DDD;
-        public string? DDD 
-        { 
 
-            get => _DDD;
-            set
-            {
-                _DDD = value;
-                onPropertyChanged();
-            }
-        }
+        ViaCepDto? _dto = null;
+
+
+
+     
+        public string? Logradouro { get => _dto?.logradouro;}  
+        public string? Bairro { get => _dto?.bairro;}       
+        public string? Localidade { get => _dto?.localidade;}       
+        public string? UF { get => _dto?.uf;}    
+        public string? DDD { get => _dto?.ddd;}
 
         public BuscaCepViewModel()
         {
@@ -86,48 +47,46 @@ namespace BuscaCep.ViewModels
 
         private Command _BuscarCommand;
         public Command BuscarCommand
-            => _BuscarCommand ?? (_BuscarCommand = new Command(async () => await BuscarCommandExecute()));
-        //{
-        //    get
-        //    {
-        //        if(_BuscarCommand == null)
-        //        {
-        //            _BuscarCommand = new Command(() => await BuscarCommandExecute());    
+            => _BuscarCommand ??= new Command(async () => await BuscarCommandExecute(),()=> BuscarCommandCanExecute());
 
-        //            return _BuscarCommand;
-
-        //        }
-        //    }
-        //}
+        private bool BuscarCommandCanExecute()
+            => !string.IsNullOrWhiteSpace(CEP) &&
+            CEP.Length == 8 &&
+            IsNotBusy;
 
         private async Task BuscarCommandExecute()
         {
             try
             {
-                if (string.IsNullOrEmpty(CEP))
-                {
-                    throw new InvalidOperationException(message: "VOCÊ PRECISA INFORMAR O CEP");
-                }
-                else
-                {                 
+                         
+                
+                    if(IsBusy)
+                        return;
 
-                    var ViaCepResult = await new HttpClient()
+                     IsBusy = true;
+                    BuscarCommand.ChangeCanExecute();
+
+
+                _dto = await new HttpClient()
                            .GetFromJsonAsync<ViaCepDto>(requestUri: $"https://viacep.com.br/ws/{CEP}/json/") ??
                            throw new InvalidOperationException(message: "ALGO DEU ERRADO");
 
-                    if (ViaCepResult.erro)
-                        throw new InvalidOperationException(message: "ALGO DEU ERRADO");
-
-                    Logradouro = ViaCepResult.logradouro;
-                    Localidade = ViaCepResult.localidade;
-                    Bairro = ViaCepResult?.bairro;
-                    UF = ViaCepResult.uf; ;
-                    DDD = ViaCepResult.ddd;
-                }
+                    if (_dto.erro)
+                        throw new InvalidOperationException(message: "ALGO DEU ERRADO");                
             }
             catch (Exception ex)
             {
                 await App.Current.MainPage.DisplayAlert("OPS", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+                BuscarCommand.ChangeCanExecute();
+                onPropertyChanged(nameof(Logradouro));
+                onPropertyChanged(nameof(Bairro));
+                onPropertyChanged(nameof(Localidade));
+                onPropertyChanged(nameof(UF));
+                onPropertyChanged(nameof(DDD));
             }
         }
     }

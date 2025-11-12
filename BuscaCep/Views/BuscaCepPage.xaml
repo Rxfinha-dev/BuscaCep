@@ -17,7 +17,9 @@
                         Command="{Binding BuscarCommand}"            
                         Text="Buscar"/>
 
-        <VerticalStackLayout Spacing="16">
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="True"></ActivityIndicator>
+
+        <VerticalStackLayout IsVisible="{Binding IsNotBusy}" Spacing="16">
             <HorizontalStackLayout Spacing="25">
                 <Label Text="Logradouro: " FontAttributes="Bold"/>
                 <Label Text="{Binding Logradouro}"/>
