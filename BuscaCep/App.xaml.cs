@@ -1,4 +1,6 @@
-﻿namespace BuscaCep
+﻿using BuscaCep.Views;
+
+namespace BuscaCep
 {
     public partial class App : Application
     {
@@ -6,7 +8,8 @@
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            //MainPage = new MainPage();
+            MainPage = new BuscaCepPage();
         }
     }
 }
