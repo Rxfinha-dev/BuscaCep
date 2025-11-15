@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,23 +11,17 @@ using System.Threading.Tasks;
 
 namespace BuscaCep.ViewModels
 {
-    sealed class BuscaCepViewModel : BaseViewModel
+    sealed partial class BuscaCepViewModel : BaseViewModel
     {
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(BuscarCommand))]
+        string? _CEP;
         
-        private string? _CEP;
-
-        public string? CEP
-        {
-            get => _CEP;
-            set
-            {
-                _CEP = value;
-                onPropertyChanged();
-                BuscarCommand.ChangeCanExecute();
-            }
-        }
-
+        
         ViaCepDto? _dto = null;
+
+
+
 
 
 
@@ -45,16 +41,18 @@ namespace BuscaCep.ViewModels
             // _BuscarCommand = new Command();
         }
 
-        private Command _BuscarCommand;
-        public Command BuscarCommand
-            => _BuscarCommand ??= new Command(async () => await BuscarCommandExecute(),()=> BuscarCommandCanExecute());
 
-        private bool BuscarCommandCanExecute()
+        
+   
+
+        private bool BuscarCanExecute()
             => !string.IsNullOrWhiteSpace(CEP) &&
             CEP.Length == 8 &&
             IsNotBusy;
 
-        private async Task BuscarCommandExecute()
+        [RelayCommand(CanExecute = nameof(BuscarCanExecute))]
+
+        private async Task Buscar()
         {
             try
             {
@@ -64,7 +62,8 @@ namespace BuscaCep.ViewModels
                         return;
 
                      IsBusy = true;
-                    BuscarCommand.ChangeCanExecute();
+                     BuscarCommand.NotifyCanExecuteChanged();
+
 
 
                 _dto = await new HttpClient()
@@ -80,13 +79,12 @@ namespace BuscaCep.ViewModels
             }
             finally
             {
-                IsBusy = false;
-                BuscarCommand.ChangeCanExecute();
-                onPropertyChanged(nameof(Logradouro));
-                onPropertyChanged(nameof(Bairro));
-                onPropertyChanged(nameof(Localidade));
-                onPropertyChanged(nameof(UF));
-                onPropertyChanged(nameof(DDD));
+                IsBusy = false;                
+                OnPropertyChanged(nameof(Logradouro));
+                OnPropertyChanged(nameof(Bairro));
+                OnPropertyChanged(nameof(Localidade));
+                OnPropertyChanged(nameof(UF));
+                OnPropertyChanged(nameof(DDD));
             }
         }
     }
