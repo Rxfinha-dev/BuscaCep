@@ -79,12 +79,17 @@ namespace BuscaCep.ViewModels
             }
             finally
             {
-                IsBusy = false;                
+                               
                 OnPropertyChanged(nameof(Logradouro));
                 OnPropertyChanged(nameof(Bairro));
                 OnPropertyChanged(nameof(Localidade));
                 OnPropertyChanged(nameof(UF));
                 OnPropertyChanged(nameof(DDD));
+
+                IsBusy = false;
+                BuscarCommand.NotifyCanExecuteChanged();
+
+
             }
         }
     }
