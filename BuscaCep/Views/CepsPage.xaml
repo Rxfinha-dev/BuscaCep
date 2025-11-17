@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BuscaCep.Views.CepsPage"
+             xmlns:viewModels="clr-namespace:BuscaCep.ViewModels"
+             x:DataType="viewModels:CepViewsModel"
+             Title="CepsPage">
+    <Grid RowDefinitions="Auto, *">
+        <Button Text="Novo CEP" Grid.Row="0"></Button>
+        
+    </Grid>
+</ContentPage>
