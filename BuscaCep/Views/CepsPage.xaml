@@ -6,7 +6,10 @@
              x:DataType="viewModels:CepViewsModel"
              Title="CepsPage">
     <Grid RowDefinitions="Auto, *">
-        <Button Text="Novo CEP" Grid.Row="0"></Button>
-        
+        <Button Text="Novo CEP" Grid.Row="0" Command="{Binding NovaBuscaCommand}"></Button>
+
+        <ListView Grid.Row="1" ItemsSource="{Binding Ceps}"/>
+
+
     </Grid>
 </ContentPage>

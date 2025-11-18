@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -71,7 +72,9 @@ namespace BuscaCep.ViewModels
                            throw new InvalidOperationException(message: "ALGO DEU ERRADO");
 
                     if (_dto.erro)
-                        throw new InvalidOperationException(message: "ALGO DEU ERRADO");                
+                        throw new InvalidOperationException(message: "ALGO DEU ERRADO");  
+                    
+                    WeakReferenceMessenger.Default.Send(_dto);
             }
             catch (Exception ex)
             {
