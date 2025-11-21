@@ -17,7 +17,7 @@ sealed partial class CepViewsModel : BaseViewModel
     [RelayCommand]    
     Task NovaBusca()
     {
-        if (WeakReferenceMessenger.Default.IsRegistered<ViaCepDto>(this))
+        if (!WeakReferenceMessenger.Default.IsRegistered<ViaCepDto>(this))
             WeakReferenceMessenger.Default.Register<ViaCepDto>(this, ViaCepMessageHandler);
         
         
@@ -34,11 +34,11 @@ sealed partial class CepViewsModel : BaseViewModel
 
     }
 
-    }
+ }
 
    
      
 
 
 
-}
+

@@ -3,12 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BuscaCep.Views.CepsPage"
              xmlns:viewModels="clr-namespace:BuscaCep.ViewModels"
+             xmlns:local="clr-namespace:BuscaCep"
              x:DataType="viewModels:CepViewsModel"
              Title="CepsPage">
     <Grid RowDefinitions="Auto, *">
-        <Button Text="Novo CEP" Grid.Row="0" Command="{Binding NovaBuscaCommand}"></Button>
+        <Button Text="Novo CEP" Grid.Row="0" Command="{Binding NovaBuscaCommand}"/>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding Ceps}"/>
+        <ListView Grid.Row="1" ItemsSource="{Binding Ceps}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:ViaCepDto">
+                    <TextCell Text="{Binding cep}" Detail="{Binding logradouro}">
+                        
+                    </TextCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
 
     </Grid>
